@@ -1,6 +1,7 @@
 # RN Chat Protokoll
 
-Beschreibung hier folgt bald 
+Dies ist die beschreibung eines peer to peer Protokolles welches im rahmen des RN praktikums implementiert werden soll.
+
 
 ## Use Cases
 
@@ -94,15 +95,110 @@ Ein Propagte wird an alle Teilnehmer geschicht, welche in  der eigenen client li
 
 ## ClientListRequest
 
-Ein client fragte bei einem server seine client liste an.
+Ein Client fragte bei einem Server Seine Client liste an.
 
 ### Auslöser
-Kein spezieller auslöser, von client implementation abhäng.
+
+Kein spezieller auslöser, von Client implementation abhäng.
  
 ### Auswirkungen / Antwort
 
 Der Server Schickt ein ClientListResponse
 
 
+## ClientListResponse
 
+Ein server sendet an einen Client eine Client Liste, welche alle ihm bekanten clients enthält
+ggf. wird ein Timestemp mit geschickt, fals gesendet, kann dieser später verwendet werden um neue Clients seit zeitpunkt X zu erfragen. 
+### Auslöser
+
+Ein ClientListRequest
  
+### Auswirkungen / Antwort
+
+Der empfänger kann die client liste des servers übernehmen.
+Keine Antwort
+
+
+## Remove Client
+
+### Auslöser
+
+Ein Client meldet sich ab, oder wird von einem anderen als nicht mehr ereichbar deklariert.
+ 
+### Auswirkungen / Antwort
+
+Sollte das Client nicht in der eigenen client list enthalten sein, so geschieht nichts und die nachricht wird ignoriert.
+Das client wird aus der eigenen Client liste ausgetragen und die nachricht an alle anderen Clients, wie ein propagate weiter geleitet.
+
+
+## Name Request 
+
+Die nachfrage nach dem Namen eines Clients
+
+### Auslöser
+
+Kein spezieller auslöser, von Client implementation abhäng.
+ 
+### Auswirkungen / Antwort
+
+Ein Name Response wird von dem angefragten client gesendet
+
+
+## Name Response
+
+Die antwort auf einen Name Request, muss keinen Namen enthalten, falls keiner enthalten ist hat das Client keinen.
+
+### Auslöser
+
+Ein Name Request
+
+### Auswirkungen / Antwort
+
+Der Client welcher ursprünglich den name Request gesendete hat, kann nun den namen des Clients übernehmen, falls das client über einen verfügt
+
+
+
+
+## Send Message 
+
+Ein Client sendet eine Nachricht an einen anderen Client
+
+### Auslöser
+
+Kein Spezifischer auslöser von implementation des Client abhängigi
+
+### Auswirkungen / Antwort
+
+Keine antwort, auswirkungen von implementation des Anderen Clients abhängig
+
+
+## New Clients Request
+
+Die anfrage an einen Server alle neuen clients seit zeitpunkt X in einer Client list zu senden.
+
+### Auslöser
+
+Kein Spezifischer auslöser von implementation des Client abhängigi
+
+### Auswirkungen / Antwort
+
+Falls unterstützt vom empfänger ein New Clients Response
+
+## New Clients Response
+
+Die antwort auf einen new clients Request, enthält eine liste aller clients die seit zeitpunkt X sich eingetragen haben und noch in der Clients List des servers enthalten sind.
+
+
+### Auslöser
+
+ein new Clients Request
+
+### Auswirkungen / Antwort
+
+Keine antwort, der anfragesteller kann seine client liste mit der des servers abgleichen.
+
+
+# Beschreibung der einzelnden felder
+
+Folgt in kürze
