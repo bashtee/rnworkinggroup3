@@ -1,28 +1,34 @@
 # RN Chat Protokoll
 
 Dies ist die beschreibung eines peer to peer Protokolles welches im rahmen des RN praktikums implementiert werden soll.
+Die daten ereichen die clients per Byte Stream.
+
+Alle Peers müssen auf einem Port eine schnittstelle bereit stellen, gegen welche sich alle anderen verbinden können.
+Des weiteren muss ein Peer sich gegen diese schnittstellen aller anderen bekannten Peers verbinden.
+Es wird also eine vollvermaschung auf gebaut.
 
 
 ## Use Cases
 
 ### Login
-Ein Client meldet sich beim server an, der Name muss hierbei nicht eindeutig sein, es wird die IP adresse in Komination mit Port und name verwendet um den client zu identifizieren/ anzuzeigen .
 
-### Update Client List
-Jeder Client baut eine verbindung, zu jedem anderen auf, dazu ist es notwendig eine aktuelle liste (name, IP, Port) Alles Clients zu führen.
+Ein Peer meldet sich im Netzwerk an, der Name muss hierbei nicht eindeutig sein, es wird die IP adresse in Komination mit dem Server Port und name verwendet um den client zu identifizieren/ anzuzeigen .
+
+### Update Peer List
+Jeder Peer baut eine verbindung, zu allen anderen auf, dazu ist es notwendig eine aktuelle liste (name, IP, Port) Alles Peers zu führen.
 Es giebt mehrere mechanismen, welche hierführ genutzt werden können,
-   + Get List      - Die ganze liste wird von dem server zum anfragesteller übertragen, eine zeitstempel wird ebenfals übermittelt
-   + Remove Client - Ein Client wird aus der List des servers ausgetragen, Der Server berbreitet diese anfrage.
+   + Get List      - Die ganze liste wird von angefragten Peer zum Anfragesteller übertragen, eine zeitstempel wird ebenfals übermittelt, fals unterstützt
+   + Remove Client - Ein Client wird aus der List des Peer ausgetragen, Der Server berbreitet diese anfrage.
 
 ### Send Message
-Es wird eine direkte verbindung zwischen 2 clients aufgebaut und eine nachricht ausgetauscht.
+Es wird in direkte Verbindung zwischen 2 Peer und eine Nachricht ausgetauscht.
 
 
 
 
 ## Aufbau Eines Nachriten Paketes
 
-Ein Paket des Protokolles besteht aus einer Liste von Feldern welcher allerdings in beliebiger reinfolge auftreten können.
+Ein Paket des Protokolles besteht aus einer Liste von Feldern welcher allerdings in beliebiger reinfolge auftreten können, diese liste kann auch lehr sein.
 
 | Typ (8Bit) | Anzahl Felder(8Bit) | List An Feldern | 
 |------------|---------------------|-----------------|
@@ -38,16 +44,16 @@ Aufbau eines Feldes
 
 | ID   | Typ   | Felder (Verpflichtend enthalten) | Felder (optional enthalten) | Beschreibung |
 |------|-------|----------------------------------|-----------------------------|--------------|
-| 0x01 | login |                                  | Name                        | Ein Client trägt sich In einem server ein, der Server verbreitet die informationen über die ereichbarkeit des Clients. |
-| 0x02 | propagate | IP, Port                     | Name                        | Informationen über ein neuen client werden an andere Server weiter gegeben. |
-| 0x03 | ClientListRequest |                       |                             | Eine anfrage, nach der Aktuellen Client list eines servers | 
-| 0x04 | ClientListResponse | ClientList          | TimeStemp                   | Die antwort auf eine Client List Anfrage des servers | 
-| 0x05 | Remove Client | IP, Port                 |                             | Ein Client wird aus einem server ausgetragen |
+| 0x01 | login |                                  | Name                        | Ein Peer trägt sich bei einem anderen Peer ein, der Peer verbreitet die informationen über die ereichbarkeit des neuen Peers. |
+| 0x02 | propagate | IP, Port                     | Name                        | Informationen über ein neuen Peer werden an andere Peers weiter gegeben. |
+| 0x03 | ClientListRequest |                       |                             | Eine anfrage, nach der Aktuellen Peer list eines Peers | 
+| 0x04 | ClientListResponse | ClientList          | TimeStemp                   | Die antwort auf eine Peer List Anfrage | 
+| 0x05 | Remove Client | IP, Port                 |                             | Ein Peer wird aus einem server ausgetragen |
 | 0x06 | Name Request |                           |                             | Die anfrage zur namensauflösung eines teilnehmers |
 | 0x07 | Name Response | Name                     |                             | Die antwort auf eine Namensauflösung |                    
 | 0x08 | Send Message | Text, TimeStemp           | ClientList	                | Sendet eine text nachricht, Die client list signalisiert CC |
-| 0x09 | New Clients Request | TimeStemp          |                             | Erfragt neue Clients seit X, ist dank propagate nicht notwendig |                    
-| 0x0A | New Clients Response | TimeStemp ClientList  |                         | eine liste von clients welche seit X hinzugefügt wurden |
+| 0x09 | New Clients Request | TimeStemp          |                             | Erfragt neue Peers seit X, ist dank propagate nicht notwendig |                    
+| 0x0A | New Clients Response | TimeStemp ClientList  |                         | eine liste von Peers welche seit X hinzugefügt wurden |
 
 
 
@@ -67,39 +73,39 @@ Aufbau eines Feldes
 
 ## Login 
 
-Ein Client meldet sich an einem server an, ein name kann Optional mitgesendet werden, dieser kann allerdings auch später über einen Name Request 
+Ein Peer meldet sich an einem Peer an, ein name kann Optional mitgesendet werden, dieser kann allerdings auch später über einen Name Request 
 
 ### Auslöser
 
-Ein Client möchte an  der Komunikation teilnehemn, sendet eine login anfrage an den server
+Ein Peer möchte an  der Komunikation teilnehemn, sendet eine login anfrage an einen Peer
 
 ### Auswirkungen / Antwort
-Der Server, an welchen die anfrage gestellt wurde nimmt Den client in seine Client Liste auf, fals noch nicht enthalten. 
-Er sendet an alle, auch den neuen client, ein propagate Paket mit den informationen des Neuen Clients.
+Der Peer, an welchen die anfrage gestellt wurde nimmt Den anfragesteller in seine Client Liste auf, fals noch nicht enthalten. 
+Fals nicht enthalten, sendet er an alle, auch den neuen Peer, ein propagate Paket mit den informationen des Neuen Peer.
 
 
 ## Propagate
 
-Informationen über ein neues Client werden im netzwerk verbeitet
+Informationen über ein neues Peer werden im netzwerk verbeitet
 
 ### Auslöser
 
  - Ein Login 
- - Der Erhalt einer Propagate nachricht, welche ein Client enthält welcher nicht in der eigenen client liste enthalten ist.
+ - Der Erhalt einer Propagate nachricht, welche ein Peer enthält welcher nicht in der eigenen client liste enthalten ist.
  
 ### Auswirkungen / Antwort
 
-Der Client welcher in der Nachricht beschreiben war wird in die eigene client liste aufgenommen.
+Der Peer welcher in der Nachricht beschreiben war wird in die eigene client liste aufgenommen.
 Ein Propagte wird an alle Teilnehmer geschicht, welche in  der eigenen client liste enthalten sind.
 
 
 ## ClientListRequest
 
-Ein Client fragte bei einem Server Seine Client liste an.
+Ein Peer fragte bei einem anderen Peer Seine Client liste an.
 
 ### Auslöser
 
-Kein spezieller auslöser, von Client implementation abhäng.
+Kein spezieller auslöser, von Peer implementation abhäng.
  
 ### Auswirkungen / Antwort
 
@@ -108,8 +114,8 @@ Der Server Schickt ein ClientListResponse
 
 ## ClientListResponse
 
-Ein server sendet an einen Client eine Client Liste, welche alle ihm bekanten clients enthält
-ggf. wird ein Timestemp mit geschickt, fals gesendet, kann dieser später verwendet werden um neue Clients seit zeitpunkt X zu erfragen. 
+Ein server sendet an einen Client eine Client Liste, welche alle ihm bekanten Peer enthält
+ggf. wird ein Timestemp mit geschickt, fals gesendet, kann dieser später verwendet werden um neue Peer seit zeitpunkt X zu erfragen. 
 ### Auslöser
 
 Ein ClientListRequest
@@ -124,30 +130,30 @@ Keine Antwort
 
 ### Auslöser
 
-Ein Client meldet sich ab, oder wird von einem anderen als nicht mehr ereichbar deklariert.
+Ein Peer meldet sich ab, oder wird von einem anderen als nicht mehr ereichbar deklariert.
  
 ### Auswirkungen / Antwort
 
-Sollte das Client nicht in der eigenen client list enthalten sein, so geschieht nichts und die nachricht wird ignoriert.
-Das client wird aus der eigenen Client liste ausgetragen und die nachricht an alle anderen Clients, wie ein propagate weiter geleitet.
+Sollte das Peer nicht in der eigenen client list enthalten sein, so geschieht nichts und die nachricht wird ignoriert.
+Das Peer wird aus der eigenen Client liste ausgetragen und die nachricht an alle anderen Peer, wie ein propagate weiter geleitet.
 
 
 ## Name Request 
 
-Die nachfrage nach dem Namen eines Clients
+Die nachfrage nach dem Namen eines Peers
 
 ### Auslöser
 
-Kein spezieller auslöser, von Client implementation abhäng.
+Kein spezieller auslöser, von Peer implementation abhäng.
  
 ### Auswirkungen / Antwort
 
-Ein Name Response wird von dem angefragten client gesendet
+Ein Name Response wird von dem angefragten Peer gesendet
 
 
 ## Name Response
 
-Die antwort auf einen Name Request, muss keinen Namen enthalten, falls keiner enthalten ist hat das Client keinen.
+Die antwort auf einen Name Request, muss keinen Namen enthalten, falls keiner enthalten ist hat der Peer keinen.
 
 ### Auslöser
 
@@ -155,22 +161,22 @@ Ein Name Request
 
 ### Auswirkungen / Antwort
 
-Der Client welcher ursprünglich den name Request gesendete hat, kann nun den namen des Clients übernehmen, falls das client über einen verfügt
+Der Peer welcher ursprünglich den name Request gesendete hat, kann nun den namen des Peers übernehmen, falls der Peer über einen verfügt
 
 
 
 
 ## Send Message 
 
-Ein Client sendet eine Nachricht an einen anderen Client
+Ein Peer sendet eine Nachricht an einen anderen Peer
 
 ### Auslöser
 
-Kein Spezifischer auslöser von implementation des Client abhängigi
+Kein Spezifischer auslöser von implementation des Peers abhängig
 
 ### Auswirkungen / Antwort
 
-Keine antwort, auswirkungen von implementation des Anderen Clients abhängig
+Keine antwort, auswirkungen von implementation des Anderen Peers abhängig
 
 
 ## New Clients Request
@@ -179,7 +185,7 @@ Die anfrage an einen Server alle neuen clients seit zeitpunkt X in einer Client 
 
 ### Auslöser
 
-Kein Spezifischer auslöser von implementation des Client abhängigi
+Kein Spezifischer auslöser von implementation des Peer abhängigi
 
 ### Auswirkungen / Antwort
 
@@ -187,7 +193,7 @@ Falls unterstützt vom empfänger ein New Clients Response
 
 ## New Clients Response
 
-Die antwort auf einen new clients Request, enthält eine liste aller clients die seit zeitpunkt X sich eingetragen haben und noch in der Clients List des servers enthalten sind.
+Die antwort auf einen new clients Request, enthält eine liste aller Peer die seit zeitpunkt X sich eingetragen haben und noch in der Clients List des servers enthalten sind.
 
 
 ### Auslöser
