@@ -32,6 +32,10 @@
   - Ein nicht erreichbarer User wird aus dem System geworfen
   - #Heartbeat nicht notwendig
   
+### **USECASE(04) - User does not response**
+  - Ein nicht erreichbarer User wird aus dem System geworfen
+  - #Heartbeat nicht notwendig
+  
 # INFOMATIONEN
   - ip + Port => Anmeldedaten
   - Def. Gruppe 1-alle
@@ -48,7 +52,6 @@ Der aufbau des commonheader ist wie folgt:
 |  8bit   | 8bit           | 16bit      | 32bit     | 16bit       | 16bit             | 
 |---------|----------------|------------|-----------|-------------|-------------------| 
 | Version |Nachrichten Typ | Reserviert | Sender IP |Sender Port  | Anzahl der Felder |
-  
   
 ## Aufbau einer Nachricht
 
@@ -80,7 +83,6 @@ Der aufbau des commonheader ist wie folgt:
 | 0x03      | UserList | (IP+Port+2)*x Byte | Siehe Aufbau User List   |
 | 0x04      | Name     | 3 < x < 24 Byte    | Ein Name, x Zeichen lang |
 | 0x05      | Text     | x Byte             | Freitext, x Zeichen lang |
-
 
 # Aufbau Userlist
 Die Liste besteht aus x aneinander gereihten Elemente, welche je aus 64Byte bestehen. Der Aufbau eines Elementes sieht folgendermaßen aus:
