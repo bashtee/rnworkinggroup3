@@ -82,8 +82,8 @@ Der aufbau des commonheader ist wie folgt:
 | 0x05      | Text     | x Byte             | Freitext, x Zeichen lang |
 
 
-# Aufbau User List
-Die liste besteht aus X aneinader gereiten elemente welche je aus 64Byte bestehen, dier aufbau eines elementes ist 
+# Aufbau Userlist
+Die Liste besteht aus x aneinander gereihten Elemente, welche je aus 64Byte bestehen. Der Aufbau eines Elementes sieht folgendermaßen aus:
 
 | 32 Bit | 16 Bit     | 16 Bit |
 |--------|------------|--------|
