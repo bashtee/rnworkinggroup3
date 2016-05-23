@@ -8,6 +8,7 @@
   - Server/Peer stellt Liste aller User bereit
   - Server/Peer sendet seinen Namen an den User
   - Peers senden Ihre Namen an den User
+  - Sollte nach 10 Sekunden Auf einer verbindung nichts gesendet werden, steht es dem server frei, diese zu schließen 
   - #Propagate
   - #Verteilung der Infratruktur
 
