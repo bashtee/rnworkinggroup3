@@ -1,5 +1,7 @@
 # DZKv1 (Die zwei Kranken Version 1)
 
+Für alle Nachrichten Texte wird UTF verwendet.
+
 ## USECASES:
 
 ### **(01) Login**
