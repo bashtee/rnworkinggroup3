@@ -1,6 +1,6 @@
 # DZKv1 (Die zwei Kranken Version 1)
 
-Für alle Nachrichten Texte wird UTF verwendet.
+Für alle Nachrichten Texte wird ASCII verwendet.
 
 ## USECASES:
 
