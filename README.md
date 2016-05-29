@@ -46,7 +46,7 @@ Für alle Nachrichten Texte wird UTF verwendet.
 # Technisches
   - Peer-to-Peer -> Vollvermascht
   - Byteorientiert
-  - 32Bit Alignment
+  - 8Bit Alignment
   - dynamisch mit commonheader (TLV kodierung)
   
 ## Aufbau des commonheader 
