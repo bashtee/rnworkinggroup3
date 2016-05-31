@@ -1,16 +1,22 @@
 package de.haw.rnp.chat.networkmanager;
 
+import de.haw.rnp.chat.controller.IControllerService;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
 
+/**
+ * A Node can be a server or a client.
+ * <p>
+ * A Node is equal to a Peer. Each Node can be a server or a client.
+ */
 public abstract class Node {
     protected int port;
     protected InetAddress hostName;
     protected OutputStream out;
-    protected InputStream in;
 
     public Node(int port, InetAddress hostName) {
         this.port = port;
@@ -37,21 +43,49 @@ public abstract class Node {
         return out;
     }
 
-    public InputStream getIn() {
-        return in;
-    }
-
+    /**
+     * Returns true if client node was started.
+     *
+     * @return true if started
+     */
     public abstract boolean startClientNode();
 
-    public abstract void stopClientNode();
+    /**
+     * Returns true if client node was stopped.
+     *
+     * @return true if stopped
+     */
+    public abstract boolean stopClientNode();
 
-    public abstract boolean startServerNode();
+    /**
+     * Returns true if server node was started.
+     *
+     * @param controller IControllerService controller
+     * @return true if started
+     */
+    public abstract boolean startServerNode(IControllerService controller);
 
-    public abstract void stopServerNode();
+    /**
+     * Returns true if server node was stopped.
+     *
+     * @return true if stopped
+     */
+    public abstract boolean stopServerNode();
 
+    /**
+     * Reads the input from a client connection.
+     */
     public abstract void readServerInput();
 
+    /**
+     * Waits for connections to the server.
+     */
     public abstract void awaitConnections();
 
+    /**
+     * Returns all incoming active client connections.
+     *
+     * @return BlockingQueue with all incoming active client connections
+     */
     public abstract BlockingQueue<Socket> getIncomingSockets();
 }

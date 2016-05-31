@@ -3,27 +3,25 @@ package de.haw.rnp.chat.model;
 import de.haw.rnp.chat.networkmanager.Node;
 
 import java.net.InetAddress;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * This class represents a User, containing a name and a clientNode.
+ * This class represents a User.
  */
 public class User {
+
     private String name;
-    private Node clientNode;
-    private Node serverNode;
-    private InetAddress hostName;
     private int port;
+    private InetAddress hostName;
+    private Node serverNode;
 
     /**
-     * @param name       the name of the user
-     * @param clientNode the clientNode attached to a user
+     * Constructs the User with the given parameters.
+     *
+     * @param name     name of the user
+     * @param port     port of the user
      */
-
-    public User(String name, Node clientNode, InetAddress hostName, int port) {
-        this.setName(name);
-        this.setClientNode(clientNode);
+    public User(String name, int port, InetAddress hostName) {
+        this.name = name;
         this.port = port;
         this.hostName = hostName;
     }
@@ -35,14 +33,6 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Node getClientNode() {
-        return clientNode;
-    }
-
-    public void setClientNode(Node clientNode) {
-        this.clientNode = clientNode;
     }
 
     public Node getServerNode() {
@@ -71,6 +61,6 @@ public class User {
 
     @Override
     public String toString() {
-        return "Name: " + this.name + " Node: " + this.clientNode;
+        return this.name + " (" + this.hostName.getHostAddress() + ":" + this.port + ")";
     }
 }
