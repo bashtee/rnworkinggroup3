@@ -58,16 +58,14 @@ final class Client implements ISimpleClient {
 				for(ISimpleUser user: users){
 					try {
 						System.out.println("Client: I will try to connect!");
-						System.out.println(user.getIP());
+						System.out.println(user.getIP()+":"+user.getPort());
 						Socket clSocket = new Socket(user.getIP(),user.getPort());
 						clSocket.getOutputStream().write(m.messageToBytes());
 						
 						clSocket.close();
 					} catch (UnknownHostException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}			

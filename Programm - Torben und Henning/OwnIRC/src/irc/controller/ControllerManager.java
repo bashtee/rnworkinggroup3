@@ -2,6 +2,7 @@ package irc.controller;
 
 import irc.interfaces.IClientController;
 import irc.interfaces.IServerController;
+import irc.view.GuiController;
 
 public final class ControllerManager {
 	private ControllerManager(){}
@@ -12,8 +13,8 @@ public final class ControllerManager {
 	 * @param port Port on which the Server should run
 	 * @return new Instance of a IServerController
 	 * */
-	public static IServerController createServerController(int port){
-		return ServerController.valueOf(port);
+	public static IServerController createServerController(String ip, int port,GuiController gCtrl){
+		return ServerController.valueOf(ip,port,gCtrl);
 	}
 	
 	/**

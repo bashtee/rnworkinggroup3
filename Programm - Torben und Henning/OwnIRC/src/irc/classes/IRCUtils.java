@@ -26,14 +26,15 @@ public final class IRCUtils {
 	public static final int IP_LENGTH = 4;
 	public static final byte ZERO = 0x0;
 	public static final int USER_BYTE_SIZE = 4;
-	public static final String ENCODING = "UTF-8";
+	public static final String ENCODING = "ASCII";
 	public static final int NUMBER_OF_WORKER = 4;
 	public static final int IP_POS_END = 8;
 	public static final long TIMEOUT = 1000000000l;
 	public static final int FIELDTYPE_LENGTH = 2;
 	public static final int FIELDLENGTH_LENGTH = 2;
-	public static final ISimpleUser ME = Values.createNewUser("192.168.137.33", 1337);
 	public static final int VERSION = 1;
+	public static final int USERLIST_SIZE = 8;
+	public static final int USERLIST_RESERVED_BYTES = 2;
 	
 	private static final Pattern _ipv4Regex = Pattern.compile("^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$");
 	
@@ -90,8 +91,8 @@ public final class IRCUtils {
 		for(byte[] field: fields){
 			length += field.length;
 		}
-		int allign = length % ALINGMENT;
-		length += allign;
+		//int allign = length % ALINGMENT; for alignment
+		//length += allign;
 		byte[] result = new byte[length];
 		int pos = 0;
 		for(byte[] field:fields){
@@ -118,8 +119,8 @@ public final class IRCUtils {
 		for(byte[] field: coll){
 			length += field.length;
 		}
-		int allign = length % ALINGMENT;
-		length += allign;
+		//int allign = length % ALINGMENT; for alignment
+		//length += allign;
 		byte[] result = new byte[length];
 		int pos = 0;
 		for(byte[] field: coll){

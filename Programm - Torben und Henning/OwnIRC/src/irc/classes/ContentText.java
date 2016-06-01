@@ -58,7 +58,7 @@ final class ContentText implements ISimpleContent{
 
 	@Override
 	public int getLength() {
-		return _message.length()+2;
+		return _message.length();
 	}
 	
 	public FieldType getFieldType(){

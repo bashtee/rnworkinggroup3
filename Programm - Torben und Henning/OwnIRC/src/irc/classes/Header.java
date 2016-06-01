@@ -1,6 +1,5 @@
 package irc.classes;
 
-import java.net.InetAddress;
 import java.nio.ByteBuffer;
 
 import irc.enums.MessageType;
@@ -58,8 +57,7 @@ final class Header implements ISimpleHeader {
 	@Override
 	public byte[] toByteHeader() {
 		byte[] header = new byte[IRCUtils.HEADER_BYTE_SIZE];
-		byte[] sender = IRCUtils.ipToByte(_sender.getIP());
-		byte[] ipAsByteArr = new byte[4];		
+		byte[] sender = IRCUtils.ipToByte(_sender.getIP());		
 		byte[] port = ByteBuffer.allocate(4).putInt(_sender.getPort()).array();
 		byte[] numFields = ByteBuffer.allocate(4).putInt(_numberFields).array();
 		

@@ -18,7 +18,7 @@ public class ISimpleServerTest {
 
 	@Test
 	public void test() {
-		fail("Not yet implemented");
+		//TODO: fail("Not yet implemented");
 	}
 
 }

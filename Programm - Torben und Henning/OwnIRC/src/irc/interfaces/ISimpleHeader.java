@@ -1,7 +1,5 @@
 package irc.interfaces;
 
-import java.net.InetAddress;
-
 import irc.enums.MessageType;
 
 public interface ISimpleHeader {

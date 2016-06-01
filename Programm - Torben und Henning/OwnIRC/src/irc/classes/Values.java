@@ -106,8 +106,8 @@ public final class Values {
 	 * @param cond Condition to wait till something can be done
 	 * @return new Instance of IWorker
 	 * */
-	public static IWorker createNewWorker(Queue<ISimpleDataInput> pendingMessages, IClientController client, List<ISimpleChat> chatList, List<ISimpleUser> userList, Lock lock, Condition cond) {
-		return Worker.valueOf(pendingMessages,client,chatList,userList,lock,cond);
+	public static IWorker createNewWorker(Queue<ISimpleDataInput> pendingMessages, Lock lock, Condition cond, IServerController serverCtrl) {
+		return Worker.valueOf(pendingMessages,lock,cond,serverCtrl);
 	}
 	
 	/**

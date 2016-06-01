@@ -23,7 +23,7 @@ public class IServerControllerTest {
 
 	@Test
 	public void runnTest() {
-		IServerController serv = ControllerManager.createServerController(1337);
+		IServerController serv = ControllerManager.createServerController("127.0.0.1",1337);
 		serv.startServer();
 		try {
 			TimeUnit.SECONDS.sleep(1);

@@ -1,7 +1,5 @@
 package irc.interfaces;
 
-import java.net.InetAddress;
-
 public interface ISimpleUser {
 	
 	

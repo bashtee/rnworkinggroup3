@@ -34,7 +34,7 @@ public class serverClientCommunicationTest {
 
 	@Test
 	public void test() {
-		IServerController serc = ControllerManager.createServerController(1337);
+		IServerController serc = ControllerManager.createServerController("127.0.0.1",1337);
 		IClientController clc = ControllerManager.createClientController();
 		serc.startServer();
 		clc.startClient();

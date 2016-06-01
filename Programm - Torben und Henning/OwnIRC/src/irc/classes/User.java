@@ -1,9 +1,5 @@
 package irc.classes;
 
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
 import irc.interfaces.ISimpleUser;
 
 final class User implements ISimpleUser {
@@ -48,6 +44,14 @@ final class User implements ISimpleUser {
 	public void setNickname(String nickname) {
 		if(IRCUtils.checkNickname(nickname))
 			this._nickname = nickname;
+	}
+	
+	@Override
+	public boolean equals(Object o){
+		if(o == this) return true;
+		if(!(o instanceof User)) return false;
+		User u = (User)o;
+		return u.getPort() == this.getPort() && u.getIP().equals(this.getIP());
 	}
 	
 }

@@ -45,7 +45,7 @@ final class Server implements ISimpleServer {
 			serverS = new ServerSocket(_port);
 		} catch (IOException e) {
 			terminate();
-			e.printStackTrace();
+			throw new IllegalArgumentException();
 		}
 		while(!_terminated){
 			try {
@@ -59,6 +59,10 @@ final class Server implements ISimpleServer {
 				terminate();
 				e.printStackTrace();
 			}
+		}
+		try {
+			serverS.close();
+		} catch (IOException e) {
 		}
 		System.out.println("Server: Goodbye lovly word...");
 	}

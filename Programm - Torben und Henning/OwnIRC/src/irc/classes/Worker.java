@@ -10,7 +10,7 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import irc.enums.FieldType;
 import irc.enums.MessageType;
-import irc.interfaces.IClientController;
+import irc.interfaces.IServerController;
 import irc.interfaces.ISimpleChat;
 import irc.interfaces.ISimpleContent;
 import irc.interfaces.ISimpleContentUserList;
@@ -22,26 +22,22 @@ import irc.interfaces.IWorker;
 
 final class Worker implements IWorker{
 	
-	private Queue<ISimpleDataInput> _pendingMessages; 
-	private List<ISimpleChat> _chatList;
-	private List<ISimpleUser> _userList;
-	private IClientController _client;
+	private Queue<ISimpleDataInput> _pendingMessages;
 	private Lock _lock;
 	private Condition _cond;
+	private IServerController _serverCtrl;
 	private volatile boolean _terminate = false;
 	private Thread _mySoul = null;
 	
-	private Worker(Queue<ISimpleDataInput> pendingMessages, IClientController client,List<ISimpleChat> chatlist,List<ISimpleUser> userList, Lock lock, Condition cond){
-		this._chatList = chatlist;
+	private Worker(Queue<ISimpleDataInput> pendingMessages, Lock lock, Condition cond, IServerController serverCtrl){
 		this._pendingMessages = pendingMessages;
-		this._userList = userList;
 		this._lock = lock;
 		this._cond = cond;
-		this._client = client;
+		this._serverCtrl = serverCtrl;
 	}
 	
-	static IWorker valueOf(Queue<ISimpleDataInput> pendingMessages, IClientController client, List<ISimpleChat> chatlist, List<ISimpleUser> userList, Lock lock, Condition cond){
-		return new Worker(pendingMessages,client,chatlist,userList,lock,cond);
+	static IWorker valueOf(Queue<ISimpleDataInput> pendingMessages,Lock lock, Condition cond,IServerController serverCtrl){
+		return new Worker(pendingMessages,lock,cond,serverCtrl);
 	}
 
 	@Override
@@ -81,6 +77,8 @@ final class Worker implements IWorker{
 					s.removeBytes(IRCUtils.HEADER_BYTE_SIZE-1+ IRCUtils.getUsedBytes(contentList));
 				}
 				ISimpleMessage simMess = Values.createNewMessage(header,null, contentList);				
+				
+				
 				if(simMess.getMessageType() == MessageType.TEXT_MESSAGE){
 					List<ISimpleUser> uList = new ArrayList<>();
 
@@ -90,8 +88,9 @@ final class Worker implements IWorker{
 					}
 					if(!uList.isEmpty()){
 						ISimpleChat acChat = null;
-						synchronized (_chatList) {
-							chatlist:for(ISimpleChat chat : _chatList){
+						List<ISimpleChat> chatList = _serverCtrl.getChatlist();
+						synchronized (chatList) {
+							chatlist:for(ISimpleChat chat : chatList){
 								if(uList.equals(chat.getUserList())){
 									acChat = chat;
 									break chatlist;
@@ -100,52 +99,46 @@ final class Worker implements IWorker{
 						//Loop end
 							if(acChat == null){
 								acChat = Values.createNewChat(uList);
-								_chatList.add(acChat);
+								chatList.add(acChat);
 							}	
 						}
-						synchronized (acChat) {
-							acChat.addMessage(simMess);
-						}
+						_serverCtrl.addMessage(acChat,simMess);
 						
 					}
 				} else if(simMess.getMessageType() == MessageType.LOGOUT) {
 					boolean done = false;
-					synchronized (_userList) {
-						ISimpleContent con1 = IRCUtils.contentsOfContents(simMess.getWholeMessage(), FieldType.IP);
-						ISimpleContent con2 = IRCUtils.contentsOfContents(simMess.getWholeMessage(), FieldType.PORT);
-						synchronized (_userList) {
-							ISimpleUser user = Values.createNewUser(con1.contentAsString(), Integer.parseInt(con2.contentAsString()));
-							done = _userList.remove(user);
-						}
-					}
+					ISimpleContent con1 = IRCUtils.contentsOfContents(simMess.getWholeMessage(), FieldType.IP);
+					ISimpleContent con2 = IRCUtils.contentsOfContents(simMess.getWholeMessage(), FieldType.PORT);
+					ISimpleUser user = Values.createNewUser(con1.contentAsString(), Integer.parseInt(con2.contentAsString()));
+					done  = _serverCtrl.removeUser(user);
 					if(done){
-						ISimpleHeader messHeader = Values.createNewHeader(IRCUtils.ME, MessageType.LOGOUT, IRCUtils.VERSION);
-						ISimpleMessage message = Values.createNewMessage(messHeader, _userList, simMess.getWholeMessage());
-						_client.addMessage(message);
+						ISimpleHeader messHeader = Values.createNewHeader(_serverCtrl.getME(), MessageType.LOGOUT, IRCUtils.VERSION);
+						ISimpleMessage message = Values.createNewMessage(messHeader, _serverCtrl.getAllUser(), simMess.getWholeMessage());
+						_serverCtrl.addMessage(message);
 					}
 				} else if(simMess.getMessageType() == MessageType.MY_NAME) {
 					ISimpleContent con = IRCUtils.contentsOfContents(simMess.getWholeMessage(), FieldType.NAME);
 					ISimpleUser user = simMess.getSender();
+					if(con != null)
 					user.setNickname(con.contentAsString());
 				} else if(simMess.getMessageType() == MessageType.LOGIN) {
 					ISimpleContent con1 = IRCUtils.contentsOfContents(simMess.getWholeMessage(), FieldType.IP);
 					ISimpleContent con2 = IRCUtils.contentsOfContents(simMess.getWholeMessage(), FieldType.PORT);
 					ISimpleContent con3 = IRCUtils.contentsOfContents(simMess.getWholeMessage(), FieldType.NAME);
-					boolean added = false;
-					synchronized (_userList) {
-						ISimpleUser user = Values.createNewUser(con1.contentAsString(), Integer.parseInt(con2.contentAsString()));
-						if (con3 != null){
-							user.setNickname(con3.contentAsString());
-						}
-						if(!_userList.contains(user)){
-							_userList.add(user);
-							added = true;
-						}
+					ISimpleUser user = Values.createNewUser(con1.contentAsString(), Integer.parseInt(con2.contentAsString()));
+					if(con3 != null){
+						user.setNickname(con3.contentAsString());
 					}
+					
+					
+					boolean added = _serverCtrl.addUser(user);
+					
 					if(added){
-						ISimpleHeader messHeader = Values.createNewHeader(IRCUtils.ME, MessageType.LOGIN, IRCUtils.VERSION);
-						ISimpleMessage message = Values.createNewMessage(messHeader, _userList, simMess.getWholeMessage());
-						_client.addMessage(message);
+						ISimpleHeader messHeader = Values.createNewHeader(_serverCtrl.getME(), MessageType.LOGIN, IRCUtils.VERSION);
+						ISimpleMessage message = Values.createNewMessage(messHeader, _serverCtrl.getAllUser(), simMess.getWholeMessage());
+						_serverCtrl.addMessage(message);
+					} else if(user.equals(_serverCtrl.getME())) {
+						_serverCtrl.addUser(simMess.getSender());
 					}
 				}
 			}
@@ -174,16 +167,6 @@ final class Worker implements IWorker{
 	@Override
 	public boolean isAlive() {
 		return _mySoul.isAlive();
-	}
-
-	@Override
-	public void setListOfChats(List<ISimpleChat> chatliste) {
-		this._chatList = chatliste;
-	}
-
-	@Override
-	public List<ISimpleChat> getListOfChats() {
-		return this._chatList;
 	}
 
 }
