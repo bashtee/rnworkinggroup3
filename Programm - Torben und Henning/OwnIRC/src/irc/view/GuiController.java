@@ -47,7 +47,7 @@ public class GuiController {
 	private TabPane _tabPane;
 	
 	@FXML
-	private TextArea _textArea;
+	private ListView<String> _messageLW;
 	
 	private App _view;
 
@@ -234,13 +234,16 @@ public class GuiController {
 	}
 
 	public void syncChat(ISimpleChat chat) {
-		List<String> chatAsStr = new LinkedList<>();
 		synchronized(chat){
-			for(ISimpleMessage m : chat.getAllMessages()){
-				ISimpleContent con = IRCUtils.contentsOfContents(m.getWholeMessage(),FieldType.TEXT);
-				chatAsStr.add(m.getSender().getIP()+" "+m.getSender().getPort()+": "+con.contentAsString());
+			int index = chat.getReadIndex();
+			for(int i = index; i<chat.countMessages();i++){
+				ISimpleMessage mes = chat.getMessage(i);
+				ISimpleUser sender = mes.getSender();
+				ISimpleContent con = IRCUtils.contentsOfContents(mes.getWholeMessage(), FieldType.TEXT);
+				if(con!=null)
+				_messageLW.getItems().add(sender.getIP()+"/"+sender.getPort()+" : "+con.contentAsString());
 			}
-			this._textArea.setText(StringUtils.join("\r\n",chatAsStr));
+			chat.setReadIndex(chat.countMessages());
 		}
 	}
 			

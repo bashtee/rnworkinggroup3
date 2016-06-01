@@ -38,4 +38,19 @@ public interface ISimpleChat {
 	 * @param user User who should be removed
 	 * */
 	public void removeUserFromChannel(ISimpleUser user);
+
+
+	public int getReadIndex();
+
+
+	public int countMessages();
+
+
+	public ISimpleMessage getMessage(int index);
+
+
+	public void setReadIndex(int countMessages);
+
+
+	public boolean isChatFor(List<ISimpleUser> uList);
 }

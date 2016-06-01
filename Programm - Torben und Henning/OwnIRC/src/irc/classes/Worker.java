@@ -91,7 +91,7 @@ final class Worker implements IWorker{
 						List<ISimpleChat> chatList = _serverCtrl.getChatlist();
 						synchronized (chatList) {
 							chatlist:for(ISimpleChat chat : chatList){
-								if(uList.equals(chat.getUserList())){
+								if(chat.isChatFor(uList)){
 									acChat = chat;
 									break chatlist;
 								}

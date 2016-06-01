@@ -14,6 +14,8 @@ final class Chat implements ISimpleChat {
 	
 	//List of Messages (want to save them maybe)
 	private List<ISimpleMessage> _protokoll;
+	
+	private int _readIndex = 0;
 
 	//Constructor
 	private Chat(List<ISimpleUser> userList){
@@ -55,5 +57,31 @@ final class Chat implements ISimpleChat {
 	public void removeUserFromChannel(ISimpleUser user) {
 		assert(user == null);
 		this._userList.remove(user);
+	}
+
+	@Override
+	public int getReadIndex() {
+		return _readIndex;
+	}
+
+	@Override
+	public int countMessages() {
+		return this._protokoll.size();
+	}
+
+	@Override
+	public ISimpleMessage getMessage(int index) {
+		return this._protokoll.get(index);
+	}
+
+	@Override
+	public void setReadIndex(int countMessages) {
+		this._readIndex = countMessages;		
+	}
+
+	@Override
+	public boolean isChatFor(List<ISimpleUser> uList) {
+		//More than one chat isn't possible TODO
+		return true;
 	}
 }
