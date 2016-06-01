@@ -7,6 +7,8 @@ import java.util.Queue;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+import com.sun.prism.TextureMap;
+
 import irc.classes.IRCUtils;
 import irc.classes.Values;
 import irc.enums.MessageType;
@@ -31,6 +33,7 @@ final class ServerController implements IServerController{
 	private ReentrantLock _lock = new ReentrantLock();
 	private Condition _cond = _lock.newCondition();
 	private List<IWorker> _workerList;
+	private List<Thread> _workerThread;
 	private List<ISimpleChat> _chatList;
 	private IClientController _clientCtrl;
 	private GuiController _gCtrl;
@@ -49,10 +52,13 @@ final class ServerController implements IServerController{
 		this._me = Values.createNewUser(ip, port);
 		this._userList.add(_me);
 		this._gCtrl = gCtrl;
+		this._workerThread = new ArrayList<>(IRCUtils.NUMBER_OF_WORKER);
 		for(int i =0; i< IRCUtils.NUMBER_OF_WORKER;i++){
 			IWorker worker = Values.createNewWorker(_pendingMessages, _lock,_cond, this);
 			_workerList.add(worker);
-			new Thread(worker).start();
+			Thread t = new Thread(worker);
+			t.start();
+			_workerThread.add(t);
 		}
 	}
 	
@@ -75,8 +81,8 @@ final class ServerController implements IServerController{
 		_clientCtrl.stopClient();
 		_workerList.forEach(elem -> {
 			elem.terminate();
-			elem.getThread().interrupt();
 		});
+		_workerThread.forEach(elem -> elem.interrupt());
 		_running = false;
 	}
 
@@ -166,10 +172,12 @@ final class ServerController implements IServerController{
 
 	@Override
 	public void stopAllWorker() {
-		_workerList.forEach(elem -> {
-			elem.terminate();
-			elem.getThread().interrupt();
-		});
+		for(IWorker w : _workerList){
+			w.terminate();
+		}
+		for(Thread t : _workerThread){
+			t.interrupt();
+		}
 	}
 
 	@Override
@@ -194,8 +202,8 @@ final class ServerController implements IServerController{
 	public boolean removeUser(ISimpleUser user) {
 		boolean result = false;
 		synchronized (_userList) {
-			if(!_userList.contains(user)){
-				_userList.add(user);
+			if(_userList.contains(user)){
+				_userList.remove(user);
 				result = true;
 			}
 		}

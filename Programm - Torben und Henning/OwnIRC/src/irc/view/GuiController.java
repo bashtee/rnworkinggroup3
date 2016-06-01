@@ -161,6 +161,17 @@ public class GuiController {
 		
 	}
 	
+	@FXML
+	public void logout(){
+		if(_serv == null){
+			return;
+		}
+		_serv.sendLogout();
+		_serv.stopAllWorker();
+		_serv.stopServer();
+		this._serv = null;
+	}
+	
 	private Pair<String,String> createDialog(String hText,String f1String,String f2String){
 		// Create the custom dialog.
 		Dialog<Pair<String, String>> dialog = new Dialog<>();

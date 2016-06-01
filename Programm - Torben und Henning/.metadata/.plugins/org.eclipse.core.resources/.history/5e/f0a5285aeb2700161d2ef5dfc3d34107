@@ -1,0 +1,222 @@
+package irc.controller;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
+
+import irc.classes.IRCUtils;
+import irc.classes.Values;
+import irc.enums.MessageType;
+import irc.interfaces.IClientController;
+import irc.interfaces.IServerController;
+import irc.interfaces.ISimpleChat;
+import irc.interfaces.ISimpleContent;
+import irc.interfaces.ISimpleDataInput;
+import irc.interfaces.ISimpleHeader;
+import irc.interfaces.ISimpleMessage;
+import irc.interfaces.ISimpleServer;
+import irc.interfaces.ISimpleUser;
+import irc.interfaces.IWorker;
+import irc.view.GuiController;
+
+final class ServerController implements IServerController{
+	private ISimpleServer _server;
+	private Thread _serverThread;
+	private Queue<ISimpleDataInput> _pendingMessages;
+	private List<ISimpleUser> _userList;
+	private boolean _running;
+	private ReentrantLock _lock = new ReentrantLock();
+	private Condition _cond = _lock.newCondition();
+	private List<IWorker> _workerList;
+	private List<Thread> _workerThread;
+	private List<ISimpleChat> _chatList;
+	private IClientController _clientCtrl;
+	private GuiController _gCtrl;
+	private ISimpleUser _me;
+	
+	private ServerController(String ip,int port, GuiController gCtrl){
+		this._clientCtrl = ControllerManager.createClientController();
+		this._pendingMessages = new LinkedList<>();
+		this._chatList = new ArrayList<>();
+		this._userList = new ArrayList<>();
+		_workerList = new ArrayList<>(IRCUtils.NUMBER_OF_WORKER);
+		this._chatList.add(Values.createNewChat(_userList));
+		this._server = Values.createNewServer(port,_pendingMessages, _lock,_cond);
+		this._serverThread = new Thread(_server);
+		this._running = false;
+		this._me = Values.createNewUser(ip, port);
+		this._userList.add(_me);
+		this._gCtrl = gCtrl;
+		this._workerThread = new ArrayList<>(IRCUtils.NUMBER_OF_WORKER);
+		for(int i =0; i< IRCUtils.NUMBER_OF_WORKER;i++){
+			IWorker worker = Values.createNewWorker(_pendingMessages, _lock,_cond, this);
+			_workerList.add(worker);
+			Thread t = new Thread(worker);
+			_workerThread.add(t);
+		}
+	}
+	
+	static ServerController valueOf(String ip, int port, GuiController gCtrl){
+		return new ServerController(ip,port,gCtrl);
+	}
+
+	@Override
+	public void startServer() {
+		if(!_running){
+			_serverThread.start();
+			_clientCtrl.startClient();
+		}
+		_running = true;
+	}
+
+	@Override
+	public void stopServer() {
+		_server.terminate();
+		_clientCtrl.stopClient();
+		_workerList.forEach(elem -> {
+			elem.terminate();
+		});
+		_workerThread.forEach(elem -> elem.interrupt());
+		_running = false;
+	}
+
+	@Override
+	public Thread getThread() {
+		return this._serverThread;
+	}
+
+	@Override
+	public Queue<ISimpleDataInput> getMessageQueue() {
+		return this._pendingMessages;
+	}
+
+	@Override
+	public void addMessage(ISimpleMessage message) {
+		_clientCtrl.addMessage(message);
+	}
+
+	@Override
+	public ISimpleUser getME() {
+		return _me;
+	}
+
+	@Override
+	public void sendLogin(String ip, int port) {
+		sendLoginOrLogout(ip, port, MessageType.LOGIN);
+	}
+
+	@Override
+	public void sendText(ISimpleChat chat, String message) {
+		ISimpleHeader header = Values.createNewHeader(_me, MessageType.TEXT_MESSAGE, IRCUtils.VERSION);
+
+		ISimpleContent conText = Values.createNewContentText(message);
+		ISimpleContent conUser = Values.createNewContentUserList(chat.getUserList());
+		
+		List<ISimpleContent> contentList = new ArrayList<>(2);
+		
+		contentList.add(conText);
+		contentList.add(conUser);
+		
+		ISimpleMessage mes = Values.createNewMessage(header, chat.getUserList(), contentList);
+		_clientCtrl.addMessage(mes);
+		//addMessage(chat,mes);
+	}
+
+	@Override
+	public void sendLogout() {
+		if(_userList.size()>1){
+			ISimpleUser user = getNotMe();
+			if((user!=null))
+			sendLoginOrLogout(user.getIP(),user.getPort(),MessageType.LOGOUT);
+		}
+	}
+	
+	private ISimpleUser getNotMe(){
+		synchronized (_userList) {
+			for(ISimpleUser user : _userList){
+				if(!user.equals(_me)) return user;
+			}
+		}
+		return null;
+	}
+	
+	private void sendLoginOrLogout(String ip,int port, MessageType type){
+		ISimpleUser user = Values.createNewUser(ip, port);
+		ISimpleHeader header = Values.createNewHeader(_me, type, IRCUtils.VERSION);
+		ISimpleContent conIP = Values.createNewContentIP(_me.getIP());
+		ISimpleContent conPort = Values.createNewContentPort(_me.getPort());
+		
+		List<ISimpleUser> users = new ArrayList<>(1);
+		users.add(user);
+		
+		List<ISimpleContent> contentList = new ArrayList<>(2);
+		
+		contentList.add(conIP);
+		contentList.add(conPort);
+		
+		ISimpleMessage mes = Values.createNewMessage(header, users, contentList);
+		_clientCtrl.addMessage(mes);
+	}
+
+	@Override
+	public void sendName(List<ISimpleUser> userList) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void stopAllWorker() {
+		for(IWorker w : _workerList){
+			Thread t = w.getThread();
+			t.interrupt();
+		}
+	}
+
+	@Override
+	public boolean addUser(ISimpleUser user) {
+		synchronized (_userList) {
+			if(!_userList.contains(user)){
+				_userList.add(user);
+				_gCtrl.syncUsers();
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	@Override
+	public List<ISimpleChat> getChatlist() {
+		return _chatList;
+	}
+
+	@Override
+	public boolean removeUser(ISimpleUser user) {
+		boolean result = false;
+		synchronized (_userList) {
+			if(!_userList.contains(user)){
+				_userList.add(user);
+				result = true;
+			}
+		}
+
+		_gCtrl.syncUsers();
+		return result;
+	}
+
+	@Override
+	public List<ISimpleUser> getAllUser() {
+		return _userList;
+	}
+
+	@Override
+	public void addMessage(ISimpleChat chat, ISimpleMessage message) {
+		synchronized(chat){
+			chat.addMessage(message);
+		}
+		_gCtrl.syncChat(chat);
+	}
+}

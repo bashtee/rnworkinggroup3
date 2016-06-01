@@ -53,7 +53,8 @@ final class Worker implements IWorker{
 					_cond.await();
 				} catch (InterruptedException e) {
 					terminate();
-					break mainwhile;
+					System.out.println("Worker: Here ends it");
+					return;
 				}
 			}
 			ISimpleDataInput s = _pendingMessages.poll();
