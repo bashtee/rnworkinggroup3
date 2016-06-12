@@ -1,8 +1,6 @@
 package irc.classes;
 
-import com.sun.nio.sctp.MessageInfo;
-import com.sun.nio.sctp.NotificationHandler;
-import com.sun.nio.sctp.SctpChannel;
+import com.sun.nio.sctp.*;
 import irc.interfaces.ISimpleClient;
 import irc.interfaces.ISimpleMessage;
 import irc.interfaces.ISimpleUser;
@@ -10,7 +8,6 @@ import irc.interfaces.ISimpleUser;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -19,7 +16,6 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
-import com.sun.nio.*;
 
 final class ClientSCTP implements ISimpleClient {
 
@@ -66,10 +62,6 @@ final class ClientSCTP implements ISimpleClient {
 
 			List<ISimpleUser> users = m.getRecipients();
 			for (ISimpleUser user : users) {
-
-					// Muss noch an korrekter Stelle eingeordnet werden.
-					clSocket.getOutputStream().write(m.messageToBytes());
-
 				try {
 					System.out.println("Client: I will try to connect!");
 					System.out.println(user.getIP() + ":" + user.getPort());
@@ -86,12 +78,8 @@ final class ClientSCTP implements ISimpleClient {
 					// expect two messages and two notifications
 					MessageInfo messageInfo = null;
 					do {
-						messageInfo = sctp.receive(buf, System.out, (NotificationHandler<PrintStream>) assocHandler);
-						buf.flip();
-
-						if (buf.remaining() > 0) {
-							System.out.println("" + decoder.decode(buf).toString());
-						}
+						//Hier muss m eingetragen werden.
+						sctp.send(buf, messageInfo);
 
 						buf.clear();
 					} while (messageInfo != null);
