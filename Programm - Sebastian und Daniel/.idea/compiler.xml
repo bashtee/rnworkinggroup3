@@ -17,19 +17,12 @@
       <profile default="true" name="Default" enabled="false">
         <processorPath useClasspath="true" />
       </profile>
-      <profile default="false" name="Annotation profile for OutgoingClientAdapter" enabled="true">
+      <profile default="false" name="Annotation profile for IncomingPeerAdapter" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
-        <module name="OutgoingClientAdapter" />
-      </profile>
-      <profile default="false" name="Maven default annotation processors profile" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="true" />
-        <module name="Utilities" />
+        <module name="IncomingPeerAdapter" />
       </profile>
       <profile default="false" name="Annotation profile for TransportComponent" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -45,19 +38,19 @@
         <processorPath useClasspath="true" />
         <module name="Client" />
       </profile>
-      <profile default="false" name="Annotation profile for IncomingPeerAdapter" enabled="true">
+      <profile default="false" name="Annotation profile for OutgoingClientAdapter" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
-        <module name="IncomingPeerAdapter" />
+        <module name="OutgoingClientAdapter" />
       </profile>
-      <profile default="false" name="Annotation profile for OutgoingPeerAdapter" enabled="true">
+      <profile default="false" name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
-        <module name="OutgoingPeerAdapter" />
+        <module name="Utilities" />
       </profile>
       <profile default="false" name="Annotation profile for IncomingClientAdapter" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -65,6 +58,13 @@
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
         <module name="IncomingClientAdapter" />
+      </profile>
+      <profile default="false" name="Annotation profile for OutgoingPeerAdapter" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="OutgoingPeerAdapter" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
