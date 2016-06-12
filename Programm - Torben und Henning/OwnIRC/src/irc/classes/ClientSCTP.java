@@ -6,14 +6,9 @@ import irc.interfaces.ISimpleMessage;
 import irc.interfaces.ISimpleUser;
 
 import java.io.IOException;
-import java.io.PrintStream;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CharsetEncoder;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.locks.Condition;
