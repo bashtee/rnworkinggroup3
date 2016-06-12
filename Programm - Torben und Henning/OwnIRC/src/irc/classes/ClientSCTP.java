@@ -61,7 +61,7 @@ final class ClientSCTP implements ISimpleClient {
 			for (ISimpleUser user : users) {
 				try {
 					SctpServerChannel ssc = SctpServerChannel.open();
-					InetSocketAddress serverAddr = new InetSocketAddress(user.getPort());
+					InetSocketAddress serverAddr = new InetSocketAddress(user.getIP(), user.getPort());
 					ssc.bind(serverAddr);
 					ByteBuffer buf = ByteBuffer.allocateDirect(60);
 
