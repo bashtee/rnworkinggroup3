@@ -74,7 +74,6 @@ final class ClientSCTP implements ISimpleClient {
 					while (true) {
 						SctpChannel sc = ssc.accept();
 
-            			/* send the message on the US stream */
 						MessageInfo messageInfo = MessageInfo.createOutgoing(null, m.messageToBytes());
 						sc.send(buf, messageInfo);
 
