@@ -1,3 +1,5 @@
+# Testmatrix
+
 +--------------------+--------------------------+--------------------------+--------------------------+
 |                    | Torben & Henning         | Sebastian & Daniel       | Lukas                    |
 +--------------------+--------------------------+--------------------------+--------------------------+
@@ -6,10 +8,10 @@
 |                    | - sendMessage (x)        | - sendMessage ()         | - sendMessage (x)        |
 |                    | - optional: sendName ()  | - optional: sendName ()  | - optional: sendName (x)  |
 +--------------------+--------------------------+--------------------------+--------------------------+
-| Sebastian & Daniel | - Login ()               | - Login ()               |                          |
-|                    | - Logout ()              | - Logout ()              |                          |
-|                    | - sendMessage ()         | - sendMessage ()         |                          |
-|                    | - optional: sendName ()  | - optional: sendName ()  |                          |
+| Sebastian & Daniel | - Login (x)               | - Login (x)               | - Login ()             |
+|                    | - Logout (x)              | - Logout (x)              | - Logout ()            |
+|                    | - sendMessage (x)         | - sendMessage (x)         | - sendMessage ()|
+|                    | - optional: sendName ()  | - optional: sendName ()  |- optional: sendName ()   |
 +--------------------+--------------------------+--------------------------+--------------------------+
 |   Torben & Henning | - Login (x)              |                          |                          |
 |                    | - Logout (x)             |                          |                          |
