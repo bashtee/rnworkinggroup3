@@ -64,18 +64,14 @@ final class ClientSCTP implements ISimpleClient {
 					InetSocketAddress serverAddr = new InetSocketAddress(user.getIP(), user.getPort());
 					ssc.bind(serverAddr);
 					ByteBuffer buf = ByteBuffer.allocateDirect(60);
+					SctpChannel sc = ssc.accept();
 
-					while (true) {
-						SctpChannel sc = ssc.accept();
+					buf.put(m.messageToBytes());
+					MessageInfo messageInfo = MessageInfo.createOutgoing(null, 0);
+					sc.send(buf, messageInfo);
 
-						buf.put(m.messageToBytes());
-
-						MessageInfo messageInfo = MessageInfo.createOutgoing(null, 0);
-						sc.send(buf, messageInfo);
-
-						buf.clear();
-						sc.close();
-					}
+					buf.clear();
+					sc.close();
 				} catch (UnknownHostException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
