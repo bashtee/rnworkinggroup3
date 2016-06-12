@@ -2,9 +2,14 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1143546817/exercise02.iml" filepath="$PROJECT_DIR$/.idea/modules/1143546817/exercise02.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1143546817/exercise02_main.iml" filepath="$PROJECT_DIR$/.idea/modules/1143546817/exercise02_main.iml" group="exercise02" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1143546817/exercise02_test.iml" filepath="$PROJECT_DIR$/.idea/modules/1143546817/exercise02_test.iml" group="exercise02" />
+      <module fileurl="file://$PROJECT_DIR$/ChatMessenger.iml" filepath="$PROJECT_DIR$/ChatMessenger.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Client/Client.iml" filepath="$PROJECT_DIR$/Client/Client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/IncomingClientAdapter/IncomingClientAdapter.iml" filepath="$PROJECT_DIR$/IncomingClientAdapter/IncomingClientAdapter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/IncomingPeerAdapter/IncomingPeerAdapter.iml" filepath="$PROJECT_DIR$/IncomingPeerAdapter/IncomingPeerAdapter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/OutgoingClientAdapter/OutgoingClientAdapter.iml" filepath="$PROJECT_DIR$/OutgoingClientAdapter/OutgoingClientAdapter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/OutgoingPeerAdapter/OutgoingPeerAdapter.iml" filepath="$PROJECT_DIR$/OutgoingPeerAdapter/OutgoingPeerAdapter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TransportComponent/TransportComponent.iml" filepath="$PROJECT_DIR$/TransportComponent/TransportComponent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Utilities/Utilities.iml" filepath="$PROJECT_DIR$/Utilities/Utilities.iml" />
     </modules>
   </component>
 </project>

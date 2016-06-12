@@ -17,10 +17,65 @@
       <profile default="true" name="Default" enabled="false">
         <processorPath useClasspath="true" />
       </profile>
+      <profile default="false" name="Annotation profile for OutgoingClientAdapter" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="OutgoingClientAdapter" />
+      </profile>
+      <profile default="false" name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="Utilities" />
+      </profile>
+      <profile default="false" name="Annotation profile for TransportComponent" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="TransportComponent" />
+      </profile>
+      <profile default="false" name="Annotation profile for Client" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="Client" />
+      </profile>
+      <profile default="false" name="Annotation profile for IncomingPeerAdapter" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="IncomingPeerAdapter" />
+      </profile>
+      <profile default="false" name="Annotation profile for OutgoingPeerAdapter" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="OutgoingPeerAdapter" />
+      </profile>
+      <profile default="false" name="Annotation profile for IncomingClientAdapter" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="IncomingClientAdapter" />
+      </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="exercise02_main" target="1.8" />
-      <module name="exercise02_test" target="1.8" />
+      <module name="ChatMessenger" target="1.5" />
+      <module name="Client" target="1.8" />
+      <module name="IncomingClientAdapter" target="1.8" />
+      <module name="IncomingPeerAdapter" target="1.8" />
+      <module name="OutgoingClientAdapter" target="1.8" />
+      <module name="OutgoingPeerAdapter" target="1.8" />
+      <module name="TransportComponent" target="1.8" />
+      <module name="Utilities" target="1.5" />
     </bytecodeTargetLevel>
   </component>
 </project>

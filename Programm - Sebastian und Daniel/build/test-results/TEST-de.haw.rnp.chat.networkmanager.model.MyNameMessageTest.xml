@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="de.haw.rnp.chat.networkmanager.model.MyNameMessageTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2016-05-31T18:55:42" hostname="daniel-linux" time="0.0">
-  <properties/>
-  <testcase name="getMessageTest" classname="de.haw.rnp.chat.networkmanager.model.MyNameMessageTest" time="0.0"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
