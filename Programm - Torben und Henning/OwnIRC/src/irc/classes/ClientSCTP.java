@@ -10,8 +10,10 @@ import java.io.PrintStream;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CharsetEncoder;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.locks.Condition;
@@ -63,28 +65,22 @@ final class ClientSCTP implements ISimpleClient {
 			List<ISimpleUser> users = m.getRecipients();
 			for (ISimpleUser user : users) {
 				try {
-					System.out.println("Client: I will try to connect!");
-					System.out.println(user.getIP() + ":" + user.getPort());
-					InetSocketAddress serverAddr = new InetSocketAddress(user.getIP(), user.getPort());
+					SctpServerChannel ssc = SctpServerChannel.open();
+					InetSocketAddress serverAddr = new InetSocketAddress(user.getPort());
+					ssc.bind(serverAddr);
 					ByteBuffer buf = ByteBuffer.allocateDirect(60);
 					Charset charset = Charset.forName("ASCII");
-					CharsetDecoder decoder = charset.newDecoder();
 
-					SctpChannel sctp = SctpChannel.open(serverAddr, 0, 0);
+					while (true) {
+						SctpChannel sc = ssc.accept();
 
-					// handler to keep track of association setup and termination
-					AssociationHandler assocHandler = new AssociationHandler();
-
-					// expect two messages and two notifications
-					MessageInfo messageInfo = null;
-					do {
-						//Hier muss m eingetragen werden.
-						sctp.send(buf, messageInfo);
+            			/* send the message on the US stream */
+						MessageInfo messageInfo = MessageInfo.createOutgoing(null, m.messageToBytes());
+						sc.send(buf, messageInfo);
 
 						buf.clear();
-					} while (messageInfo != null);
-
-					sctp.close();
+						sc.close();
+					}
 				} catch (UnknownHostException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
@@ -98,22 +94,5 @@ final class ClientSCTP implements ISimpleClient {
 	@Override
 	public void terminate() {
 		this._terminated = true;
-	}
-
-	static class AssociationHandler	extends AbstractNotificationHandler<printstream> {
-		public HandlerResult handleNotification(AssociationChangeNotification not, PrintStream stream) {
-			if (not.event().equals(COMM_UP)) {
-				int outbound = not.association().maxOutboundStreams();
-				int inbound = not.association().maxInboundStreams();
-				stream.printf("New association setup with %d outbound streams" + ", and %d inbound streams.\n", outbound, inbound);
-			}
-
-			return HandlerResult.CONTINUE;
-		}
-
-		public HandlerResult handleNotification(ShutdownNotification not, PrintStream stream) {
-			stream.printf("The association has been shutdown.\n");
-			return HandlerResult.RETURN;
-		}
 	}
 }
