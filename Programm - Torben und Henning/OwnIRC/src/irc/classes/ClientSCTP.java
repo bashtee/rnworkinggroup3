@@ -69,12 +69,13 @@ final class ClientSCTP implements ISimpleClient {
 					InetSocketAddress serverAddr = new InetSocketAddress(user.getPort());
 					ssc.bind(serverAddr);
 					ByteBuffer buf = ByteBuffer.allocateDirect(60);
-					Charset charset = Charset.forName("ASCII");
 
 					while (true) {
 						SctpChannel sc = ssc.accept();
 
-						MessageInfo messageInfo = MessageInfo.createOutgoing(null, m.messageToBytes());
+						buf.put(m.messageToBytes());
+
+						MessageInfo messageInfo = MessageInfo.createOutgoing(null, 0);
 						sc.send(buf, messageInfo);
 
 						buf.clear();
