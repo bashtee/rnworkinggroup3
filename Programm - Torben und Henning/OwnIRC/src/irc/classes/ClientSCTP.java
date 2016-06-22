@@ -7,6 +7,7 @@ import irc.interfaces.ISimpleUser;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.List;
@@ -60,18 +61,14 @@ final class ClientSCTP implements ISimpleClient {
 			List<ISimpleUser> users = m.getRecipients();
 			for (ISimpleUser user : users) {
 				try {
-					SctpServerChannel ssc = SctpServerChannel.open();
-					InetSocketAddress serverAddr = new InetSocketAddress(user.getIP(), user.getPort());
-					ssc.bind(serverAddr);
-					ByteBuffer buf = ByteBuffer.allocateDirect(60);
-					SctpChannel sc = ssc.accept();
-
-					buf.put(m.messageToBytes());
-					MessageInfo messageInfo = MessageInfo.createOutgoing(null, 0);
-					sc.send(buf, messageInfo);
-
-					buf.clear();
-					sc.close();
+					
+					SocketAddress sa = new InetSocketAddress(user.getIP(),user.getPort()); 
+					SctpChannel sc = SctpChannel.open(sa, 0, 0);
+					MessageInfo messI = MessageInfo.createOutgoing(null, IRCUtils.VERSION);
+					
+					ByteBuffer b = ByteBuffer.wrap(m.messageToBytes());
+					sc.send(b, messI);
+					
 				} catch (UnknownHostException e) {
 					e.printStackTrace();
 				} catch (IOException e) {

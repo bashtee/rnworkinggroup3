@@ -4,6 +4,7 @@ import irc.interfaces.ISimpleDataInput;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -18,6 +19,13 @@ public class DataInputSCTP implements ISimpleDataInput{
 	private ByteBuffer _b = ByteBuffer.allocateDirect(IRCUtils.BYTEBUFFER_SIZE);
     
 	private DataInputSCTP(SctpChannel s){
+		if(s.isBlocking()){
+			try {
+				s.configureBlocking(false);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		this._chan = s;
 		this._time = System.nanoTime();
 		this._readedBytes = new byte[0];
@@ -31,21 +39,19 @@ public class DataInputSCTP implements ISimpleDataInput{
 		byte[] read = new byte[0];
 		MessageInfo messageInfo = null;
         do {
-        	if (_b.remaining() > 0){
-            	byte[] data = new byte[_b.remaining()];
-            	_b.get(data, 0, _b.remaining());
-            	_readedBytes = IRCUtils.addAll(_readedBytes,data);
-            	_b.clear();
-            }
             try {
             	messageInfo = _chan.receive(_b, null,null);
             } catch (IOException e) {
 				e.printStackTrace();
 				return read;
 			}
+            if(messageInfo == null || messageInfo.bytes()<0){
+            	return _readedBytes;
+            }
             if (_b.remaining() > 0){
-            	byte[] data = new byte[_b.remaining()];
-            	_b.get(data, 0, _b.remaining());
+            	byte[] data = new byte[messageInfo.bytes()];
+            	_b.position(0);
+            	_b.get(data);
             	_readedBytes = IRCUtils.addAll(_readedBytes,data);
             }
             _b.clear();
