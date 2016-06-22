@@ -35,7 +35,7 @@ public final class IRCUtils {
 	public static final int VERSION = 1;
 	public static final int USERLIST_SIZE = 8;
 	public static final int USERLIST_RESERVED_BYTES = 2;
-	
+	public static final int BYTEBUFFER_SIZE = 200;
 	private static final Pattern _ipv4Regex = Pattern.compile("^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$");
 	
 	//Constructor
@@ -91,8 +91,6 @@ public final class IRCUtils {
 		for(byte[] field: fields){
 			length += field.length;
 		}
-		//int allign = length % ALINGMENT; for alignment
-		//length += allign;
 		byte[] result = new byte[length];
 		int pos = 0;
 		for(byte[] field:fields){

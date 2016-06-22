@@ -6,6 +6,7 @@ import java.util.Queue;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import com.sun.nio.sctp.*;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -40,6 +41,15 @@ public final class Values {
 	 * */
 	public static ISimpleClient createNewClient(Queue<ISimpleMessage> massagePool,ReentrantLock lock, Condition cond){
 		return Client.valueOf(massagePool, lock, cond);
+	}
+	
+	/**
+	 * @author mader
+	 * Function to create a new instance of a client
+	 * @return New instance of ISimpleClient
+	 * */
+	public static ISimpleClient createNewClient(Queue<ISimpleMessage> massagePool,ReentrantLock lock, Condition cond, boolean bool){
+		return ClientSCTP.valueOf(massagePool, lock, cond);
 	}
 	
 	/**
@@ -242,6 +252,25 @@ public final class Values {
 	 * */
 	public static ISimpleDataInput createNewDataInput(Socket s){
 		return DataInput.valueOf(s);
+	}
+	
+	/**
+	 * Function to create a new instance of ISimpleDataInput
+	 * @author tin
+	 * @param s Channel
+	 * */
+	public static ISimpleDataInput createNewDataInput(SctpChannel s){
+		return DataInputSCTP.valueOf(s);
+	}
+	
+	/**
+	 * @author mader
+	 * Function to create a new instance of a server
+	 * @param port Port on which the Server should listen
+	 * @return New instance of ISimpleServer
+	 * */
+	public static ISimpleServer createNewServer(int port,Queue<ISimpleDataInput> pendingMessages, ReentrantLock lock, Condition cond, boolean bool){
+		return SCTPServer.valueOf(port,pendingMessages, lock, cond);
 	}
 
 }
