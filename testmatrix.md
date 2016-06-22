@@ -62,7 +62,7 @@
                 <li>Login (x)</li>
                 <li>Logout (x)</li>
                 <li>sendMessage (x)</li>
-                <li>optional: sendName ()</li>
+                <li>optional: sendName (x)</li>
             </ul>
         </td>
         <td></td>
@@ -133,7 +133,7 @@
                 <li>Login (x)</li>
                 <li>Logout (x)</li>
                 <li>sendMessage (x)</li>
-                <li>optional: sendName ()</li>
+                <li>optional: sendName (x)</li>
             </ul>
         </td>
         <td></td>
