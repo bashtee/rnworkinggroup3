@@ -114,8 +114,11 @@ final class ServerController implements IServerController{
 	@Override
 	public void sendText(ISimpleChat chat, String message) {
 		ISimpleHeader header = Values.createNewHeader(_me, MessageType.TEXT_MESSAGE, IRCUtils.VERSION);
-
-		ISimpleContent conText = Values.createNewContentText(message);
+		int index = 0;
+		while(index < message.length()){
+		String messagepart = message.substring(index,Math.min(index+ IRCUtils.MESSAGE_LENGTH, message.length()));
+		
+		ISimpleContent conText = Values.createNewContentText(messagepart);
 		ISimpleContent conUser = Values.createNewContentUserList(chat.getUserList());
 		
 		List<ISimpleContent> contentList = new ArrayList<>(2);
@@ -125,6 +128,8 @@ final class ServerController implements IServerController{
 		
 		ISimpleMessage mes = Values.createNewMessage(header, chat.getUserList(), contentList);
 		_clientCtrl.addMessage(mes);
+		index += IRCUtils.MESSAGE_LENGTH;
+		}
 		//addMessage(chat,mes);
 	}
 

@@ -68,6 +68,7 @@ final class ClientSCTP implements ISimpleClient {
 					
 					ByteBuffer b = ByteBuffer.wrap(m.messageToBytes());
 					sc.send(b, messI);
+					sc.close();
 					
 				} catch (UnknownHostException e) {
 					e.printStackTrace();

@@ -43,19 +43,21 @@ public class DataInputSCTP implements ISimpleDataInput{
             	messageInfo = _chan.receive(_b, null,null);
             } catch (IOException e) {
 				e.printStackTrace();
+				_b.position(0);
 				return read;
 			}
-            if(messageInfo == null || messageInfo.bytes()<0){
+            if(messageInfo == null || !(_b.position()>0)){
             	return _readedBytes;
             }
             if (_b.remaining() > 0){
-            	byte[] data = new byte[messageInfo.bytes()];
+            	byte[] data = new byte[_b.position()];
             	_b.position(0);
             	_b.get(data);
             	_readedBytes = IRCUtils.addAll(_readedBytes,data);
             }
             _b.clear();
         } while (messageInfo.bytes()>0);
+        _b.position(0);
 		return _readedBytes;
 	}
 
@@ -96,7 +98,7 @@ public class DataInputSCTP implements ISimpleDataInput{
 			e.printStackTrace();
 			return false;
 		}
-		if(_b.remaining() > 0) {
+		if(_b.position() > 0) {
 			setTimestamp();
 			return true;
 		}

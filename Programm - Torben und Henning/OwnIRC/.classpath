@@ -7,6 +7,5 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="commons-io-2.5/commons-io-2.5.jar"/>
 	<classpathentry kind="lib" path="commons-lang3-3.4/commons-lang3-3.4.jar"/>
-	<classpathentry kind="lib" path="commons-lang3-3.4/commons-lang3-3.4-javadoc.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
